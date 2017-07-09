@@ -5,7 +5,6 @@ import cn.nukkit.scheduler.PluginTask;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class KeepConnectionTask extends PluginTask
 {
@@ -22,23 +21,11 @@ public class KeepConnectionTask extends PluginTask
             try
             {
                 Connection conn = DBProvider.get();
-                Statement statement = conn.createStatement();
-                statement.executeQuery("SELECT 1");
-                statement.close();
-                DBProvider.close(conn);
+                DBProvider.close(conn, false);
             }
             catch(SQLException ex)
             {
-                try
-                {
-                    DBProvider.close(DBProvider.create());
-                }
-                catch(SQLException exception)
-                {
-                    getOwner().getLogger().warning("Error trying to create new connections.");
-                    exception.printStackTrace();
-                    return;
-                }
+                ex.printStackTrace();
             }
         }
     }

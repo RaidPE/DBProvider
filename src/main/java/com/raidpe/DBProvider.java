@@ -67,27 +67,46 @@ public class DBProvider extends cn.nukkit.plugin.PluginBase
     public static Connection get() throws SQLException
     {
         if(connections.size() <= min_size) return create();
-        return connections.remove(0);
+        Connection conn =  connections.remove(0);
+        return isConnectionAlive(conn) ? conn : create();
     }
 
     public static void close(Connection conn)
     {
+        close(conn, true);
+    }
+
+    public static void close(Connection conn, boolean check)
+    {
         try
         {
+            if(check && !isConnectionAlive(conn)) return;
             if(connections.size() >= max_size)
             {
                 conn.close();
                 return;
             }
-            if(conn == null || conn.isClosed()) return;
-            Statement statement = conn.createStatement();
-            statement.executeQuery("SELECT 1");
-            statement.close();
             connections.add(conn);
         }
         catch(SQLException ex)
         {
             ex.printStackTrace();
+        }
+    }
+
+    private static boolean isConnectionAlive(Connection conn)
+    {
+        try
+        {
+            if(conn == null || conn.isClosed()) return false;
+            Statement statement = conn.createStatement();
+            statement.executeQuery("SELECT 1");
+            statement.close();
+            return true;
+        }
+        catch(SQLException ex)
+        {
+            return false;
         }
     }
 }
