@@ -1,0 +1,7 @@
+name: DBProvider
+version: @VERSION@
+api: ["1.0.0"]
+author: RaidPE
+
+load: STARTUP
+main: com.raidpe.DBProvider
