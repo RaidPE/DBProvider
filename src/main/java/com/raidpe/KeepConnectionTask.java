@@ -22,8 +22,9 @@ public class KeepConnectionTask extends PluginTask
             {
                 Connection conn = DBProvider.get();
                 DBProvider.close(conn, false);
+                Thread.sleep(getOwner().getServer().getPropertyInt("pool.sleep-time", 1000));
             }
-            catch(SQLException ex)
+            catch(Exception ex)
             {
                 ex.printStackTrace();
             }
